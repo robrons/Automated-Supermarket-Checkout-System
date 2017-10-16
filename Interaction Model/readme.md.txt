@@ -1,1 +1,0 @@
-Static model designs folder. 
