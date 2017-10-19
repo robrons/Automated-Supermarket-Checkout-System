@@ -35,10 +35,6 @@
       <member type="xmi"
               name="staticModel.xmi" />
       <member type="pgml"
-              name="staticModel_ClassDiagram.pgml"
-              diagramclass="org.argouml.uml.diagram.static_structure.ui.UMLClassDiagram"
-              diagramname="Class Diagram" />
-      <member type="pgml"
               name="staticModel_UseCaseDiagram.pgml"
               diagramclass="org.argouml.uml.diagram.use_case.ui.UMLUseCaseDiagram"
               diagramname="Use Case Diagram" />
@@ -46,6 +42,10 @@
               name="staticModel_ClassDiagram2.pgml"
               diagramclass="org.argouml.uml.diagram.static_structure.ui.UMLClassDiagram"
               diagramname="Class Diagram 2" />
+      <member type="pgml"
+              name="staticModel_SequenceDiagram.pgml"
+              diagramclass="org.argouml.sequence2.diagram.UMLSequenceDiagram"
+              diagramname="Sequence Diagram" />
       <member type="todo"
               name="staticModel.todo" />
     </members>
@@ -62,7 +62,7 @@
 			CodeGeneration
 		</plugin>
 </profile>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Mon Oct 16 18:13:41 CDT 2017'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Thu Oct 19 12:27:31 CDT 2017'>
   <XMI.header>    <XMI.documentation>
       <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
       <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
@@ -260,14 +260,29 @@
             </UML:AssociationEnd>
           </UML:Association.connection>
         </UML:Association>
+        <UML:Actor xmi.id = '-64--88--35-1--1c5508e2:15f27b0c2ca:-8000:0000000000000A7E'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:Collaboration xmi.id = '-64--88--35-1--1c5508e2:15f27b0c2ca:-8000:0000000000000A7F'
+          name = 'unattachedCollaboration' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false'>
+          <UML:Namespace.ownedElement>
+            <UML:ClassifierRole xmi.id = '-64--88--35-1--1c5508e2:15f27b0c2ca:-8000:0000000000000A80'
+              isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+              <UML:ClassifierRole.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88--35-1--1c5508e2:15f27b0c2ca:-8000:0000000000000A82'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88--35-1--1c5508e2:15f27b0c2ca:-8000:0000000000000A81'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:ClassifierRole.multiplicity>
+            </UML:ClassifierRole>
+          </UML:Namespace.ownedElement>
+        </UML:Collaboration>
       </UML:Namespace.ownedElement>
     </UML:Model>
   </XMI.content>
 </XMI>
-<pgml description="org.argouml.uml.diagram.static_structure.ui.UMLClassDiagram|-64--88--35-1--60117bb1:15f27511c4f:-8000:0000000000000865"
-      name="Class Diagram"
->
-</pgml>
 <pgml description="org.argouml.uml.diagram.use_case.ui.UMLUseCaseDiagram|-64--88--35-1--60117bb1:15f27511c4f:-8000:0000000000000865"
       name="Use Case Diagram"
 >
@@ -313,7 +328,7 @@
       justification="Center"
     >User Interface</text>
     <group name="Fig0.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[57, 20, 64, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[57, 25, 198, 0]"
          href="-64--88--35-1--60117bb1:15f27511c4f:-8000:0000000000000866"
          fill="0"
          fillcolor="white"
@@ -326,8 +341,8 @@
       
       <rectangle name="Fig0.2.0"
         x="57"
-        y="20"
-        width="64"
+        y="25"
+        width="198"
         height="0"
         fill="0"
         fillcolor="white"
@@ -438,7 +453,7 @@
       justification="Center"
     >Connector</text>
     <group name="Fig1.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[337, 89, 64, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[337, 105, 198, 0]"
          href="-64--88--35-1--60117bb1:15f27511c4f:-8000:000000000000086C"
          fill="0"
          fillcolor="white"
@@ -451,8 +466,8 @@
       
       <rectangle name="Fig1.2.0"
         x="337"
-        y="89"
-        width="64"
+        y="105"
+        width="198"
         height="0"
         fill="0"
         fillcolor="white"
@@ -526,7 +541,7 @@
     </group>
   </group>
   <group name="Fig2"
-       description="org.argouml.uml.diagram.static_structure.ui.FigClass[40, 184, 216, 67]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[56, 200, 216, 67]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
        href="-64--88--35-1--60117bb1:15f27511c4f:-8000:0000000000000870"
        fill="1"
        fillcolor="white"
@@ -537,8 +552,8 @@
     </private>
     
     <rectangle name="Fig2.0"
-      x="40"
-      y="184"
+      x="56"
+      y="200"
       width="216"
       height="67"
       fill="1"
@@ -547,8 +562,8 @@
       strokecolor="black"
     />
     <text name="Fig2.1"
-      x="41"
-      y="185"
+      x="57"
+      y="201"
       width="214"
       height="23"
       fill="0"
@@ -563,7 +578,7 @@
       justification="Center"
     >Database Interactive Class &lt;Entitiy&gt;</text>
     <group name="Fig2.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[65, 193, 64, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[57, 201, 214, 0]"
          href="-64--88--35-1--60117bb1:15f27511c4f:-8000:0000000000000870"
          fill="0"
          fillcolor="white"
@@ -575,9 +590,9 @@
       </private>
       
       <rectangle name="Fig2.2.0"
-        x="65"
-        y="193"
-        width="64"
+        x="57"
+        y="201"
+        width="214"
         height="0"
         fill="0"
         fillcolor="white"
@@ -586,8 +601,8 @@
       />
     </group>
     <rectangle name="Fig2.3"
-      x="40"
-      y="208"
+      x="56"
+      y="224"
       width="216"
       height="1"
       fill="1"
@@ -596,7 +611,7 @@
       strokecolor="black"
     />
     <group name="Fig2.4"
-         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[41, 209, 214, 21]"
+         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[57, 225, 214, 21]"
          href="-64--88--35-1--60117bb1:15f27511c4f:-8000:0000000000000870"
          fill="0"
          fillcolor="white"
@@ -607,8 +622,8 @@
       </private>
       
       <rectangle name="Fig2.4.0"
-        x="41"
-        y="209"
+        x="57"
+        y="225"
         width="214"
         height="21"
         fill="0"
@@ -618,8 +633,8 @@
       />
     </group>
     <rectangle name="Fig2.5"
-      x="40"
-      y="229"
+      x="56"
+      y="245"
       width="216"
       height="1"
       fill="1"
@@ -628,7 +643,7 @@
       strokecolor="black"
     />
     <group name="Fig2.6"
-         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[41, 230, 214, 21]"
+         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[57, 246, 214, 21]"
          href="-64--88--35-1--60117bb1:15f27511c4f:-8000:0000000000000870"
          fill="0"
          fillcolor="white"
@@ -639,8 +654,8 @@
       </private>
       
       <rectangle name="Fig2.6.0"
-        x="41"
-        y="230"
+        x="57"
+        y="246"
         width="214"
         height="21"
         fill="0"
@@ -688,7 +703,7 @@
       justification="Center"
     >Bank Database Checker</text>
     <group name="Fig3.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[593, 25, 64, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[593, 25, 198, 0]"
          href="-64--88--35-1--60117bb1:15f27511c4f:-8000:0000000000000874"
          fill="0"
          fillcolor="white"
@@ -702,7 +717,7 @@
       <rectangle name="Fig3.2.0"
         x="593"
         y="25"
-        width="64"
+        width="198"
         height="0"
         fill="0"
         fillcolor="white"
@@ -813,7 +828,7 @@
       justification="Center"
     >Logic</text>
     <group name="Fig4.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[593, 185, 64, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[593, 185, 198, 0]"
          href="-64--88--35-1--60117bb1:15f27511c4f:-8000:000000000000087A"
          fill="0"
          fillcolor="white"
@@ -827,7 +842,7 @@
       <rectangle name="Fig4.2.0"
         x="593"
         y="185"
-        width="64"
+        width="198"
         height="0"
         fill="0"
         fillcolor="white"
@@ -945,7 +960,7 @@
                         offset="5" />
     </private>
     <path name="Fig5.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
@@ -1002,14 +1017,14 @@
                         offset="5" />
     </private>
     <path name="Fig6.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="255"
-              y="184" />
+      <moveto x="271"
+              y="200" />
       <lineto x="336"
               y="175" />
     </path>
@@ -1059,7 +1074,7 @@
                         offset="5" />
     </private>
     <path name="Fig7.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
@@ -1116,7 +1131,7 @@
                         offset="5" />
     </private>
     <path name="Fig8.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
@@ -1128,6 +1143,10 @@
               y="184" />
     </path>
   </group>
+</pgml>
+<pgml description="org.argouml.sequence2.diagram.UMLSequenceDiagram|-64--88--35-1--1c5508e2:15f27b0c2ca:-8000:0000000000000A7F"
+      name="Sequence Diagram"
+>
 </pgml>
 <todo>
 <todolist>
