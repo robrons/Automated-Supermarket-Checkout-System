@@ -1,9 +1,9 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Connection;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 
 public class UserInterface  {
 	
@@ -12,9 +12,18 @@ public class UserInterface  {
 	static JPanel panel;
 	static JTextField itemNumber; 
 	static JButton scanButton;
+	static Connection conn; 
 
 	public static void main(String[] args) {
 	
+		JavaDB instance = new JavaDB(); 
+		
+		//MySQL Connection
+		try {
+			conn = instance.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
 		
 		frame = new JFrame();
 		
@@ -81,7 +90,7 @@ public class UserInterface  {
 				
 				itemNumber = new JTextField();
 				itemNumber.setText("Enter the Item Number to Scan");
-				itemNumber.setBounds(10, 540, 500, 20);
+				itemNumber.setBounds(10, 520, 500, 20);
 				panel.add(itemNumber);
 				
 				//Clears default text when mouse is clicked on the JTextField
@@ -97,7 +106,7 @@ public class UserInterface  {
 				
 				scanButton = new JButton(); 
 				scanButton.setText("Scan");
-				scanButton.setBounds(550, 540, 90, 19);
+				scanButton.setBounds(550, 520, 90, 19);
 				panel.add(scanButton);
 				
 				//Action handler addition to scan button  
@@ -130,6 +139,5 @@ public class UserInterface  {
 		
 		}
 		
-
 	
 }
