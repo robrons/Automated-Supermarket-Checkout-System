@@ -1,6 +1,8 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 
 import javax.swing.*;
@@ -12,22 +14,24 @@ public class UserInterface  {
 	static JPanel panel;
 	static JTextField itemNumber; 
 	static JButton scanButton;
-	static Connection conn; 
-
-	public static void main(String[] args) {
+	static JButton totalButton; 
+	static JButton subtotalButton; 
+	static JButton cancelcheckoutButton;
+	static JButton debitButton; 
+	static JButton creditButton; 
+	static JButton cancelpaymentButton; 
+	static JavaDB instance; 
+	static int offset = 10; 
+	static double total = 0.0; 
 	
-		JavaDB instance = new JavaDB(); 
-		
-		//MySQL Connection
-		try {
-			conn = instance.getConnection();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		
+	public static void main(String[] args) {
+			
 		frame = new JFrame();
 		
 		panel = new JPanel();
+		
+		//Create an obeject for JavaDB connection
+		instance = new JavaDB(); 
 		
 		//Adding Panel to Frame 
 		panel.setBackground(Color.CYAN);
@@ -48,7 +52,7 @@ public class UserInterface  {
 		
 				JLabel welcome = new JLabel("Welcome to the Self-Checkout Station"); 
 				
-				welcome.setBounds(124, 40, 600, 50);
+				welcome.setBounds(150, 40, 600, 50);
 				
 				welcome.setFont(new Font("Serif", Font.BOLD, 24));
 				
@@ -67,6 +71,32 @@ public class UserInterface  {
 		
 		
 	}
+	
+	//Function that Resets the JPanel Back to the Initial State
+	public static void reset() {
+		
+			panel.removeAll();
+			panel.revalidate();
+			panel.repaint();
+			
+			//Reset values 
+			
+			offset = 10; 
+			total = 0.0; 
+			
+			JLabel welcome = new JLabel("Welcome to the Self-Checkout Station"); 
+			
+			welcome.setBounds(150, 40, 600, 50);
+			
+			welcome.setFont(new Font("Serif", Font.BOLD, 24));
+			
+			panel.add(welcome);
+			
+			panel.add(checkoutButton);
+			
+			
+		}
+	
 	
 	//Even handler class for Start Checkout button 
 	
@@ -89,8 +119,8 @@ public class UserInterface  {
 				//Scan entry using item number text field
 				
 				itemNumber = new JTextField();
-				itemNumber.setText("Enter the Item Number to Scan");
-				itemNumber.setBounds(10, 520, 500, 20);
+				itemNumber.setText(" Enter the Item Number to Scan");
+				itemNumber.setBounds(10, 520, 290, 20);
 				panel.add(itemNumber);
 				
 				//Clears default text when mouse is clicked on the JTextField
@@ -102,22 +132,69 @@ public class UserInterface  {
 		            }
 		        });
 				
-				//Scan button to enter the data
+				//Addition of Cancel Checkout button to enter the data
+				
+				cancelcheckoutButton = new JButton(); 
+				cancelcheckoutButton.setText("Cancel Checkout");
+				cancelcheckoutButton.setBounds(310, 520, 130, 19);
+				panel.add(cancelcheckoutButton);
+				
+				//Addition of Scan button to enter the data
 				
 				scanButton = new JButton(); 
 				scanButton.setText("Scan");
-				scanButton.setBounds(550, 520, 90, 19);
+				scanButton.setBounds(440, 520, 70, 19);
 				panel.add(scanButton);
+				
+				//Addition of Subtotal Button to calculate the Total
+				
+				subtotalButton = new JButton(); 
+				subtotalButton.setText("SubTotal");
+				subtotalButton.setBounds(510, 520, 90, 19);
+				panel.add(subtotalButton);
+				
+				//Addition of Total Button to calculate the Total
+				
+				totalButton = new JButton(); 
+				totalButton.setText("Total");
+				totalButton.setBounds(600, 520, 70, 19);
+				panel.add(totalButton);
+				
+				//Action handler addition to scan button  
+				
+				cancelcheckoutHandler cchandler = new cancelcheckoutHandler();
+				cancelcheckoutButton.addActionListener(cchandler);
+				
 				
 				//Action handler addition to scan button  
 				
 				scanHandler shandler = new scanHandler();
 				scanButton.addActionListener(shandler);
+				
+				//Action handler addition to total button  
+				
+				totalHandler thandler = new totalHandler();
+				totalButton.addActionListener(thandler);
 
+				//Action handler addition to subtotal button  
+				
+				subtotalHandler sbhandler = new subtotalHandler();
+				subtotalButton.addActionListener(sbhandler);
 			}
 		}
 	}
 	
+	//Event handler class for the cancel checkout button 
+	private static class cancelcheckoutHandler implements ActionListener {
+				
+		public void actionPerformed(ActionEvent event) {
+					
+			//Calls reset function to reset the checkout system 
+					reset(); 
+					 
+			}
+				
+	}
 	
 	//Event handler class for the scan button 
 	private static class scanHandler implements ActionListener {
@@ -127,17 +204,129 @@ public class UserInterface  {
 			panel.repaint();
 			
 		    String s = itemNumber.getText(); 
+		    
+		    String op = null; 
 			   
-			   JLabel text = new JLabel(s); 
+		    //SQL Command on object instance to get the information from inventory 
+		    
+			try {
+				op = instance.getInventory("SELECT item, price FROM inventory WHERE ID=" + s);
 				
-				text.setBounds(124, 40, 600, 50);
-				
-				text.setFont(new Font("Serif", Font.BOLD, 24));
-				
-				panel.add(text);
+					//Display the results into the JPanel 
+					
+					String[] splitted = op.split("\\s+"); 
+					
+					//Conversion of price to double and addition into total 
+					
+					total += Double.parseDouble(splitted[splitted.length-1].replace("$", ""));
+										
+				    JLabel text = new JLabel(op); 
+				    
+					text.setBounds(10, 50 + offset, 600, 30);
+					
+					text.setFont(new Font("Serif", Font.ITALIC, 24));
+					
+					panel.add(text);
+					
+					offset += 30; 
+						
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			
+			 
 			}
 		
 		}
+	
+	//Event handler class for the subtotal button 
+			private static class subtotalHandler implements ActionListener {
+				
+				public void actionPerformed(ActionEvent event) {
+					
+					panel.repaint();
+					
+					//Prints Total Value and Tax
+					double tax = total * .0825; 
+					
+					//Set precision of double
+					Double truncatedDouble = BigDecimal.valueOf(tax)
+						    .setScale(3, RoundingMode.HALF_UP)
+						    .doubleValue();
+					
+					JLabel text = new JLabel("Sub Total: $" + total + " Tax: $" + truncatedDouble);
+					
+				    
+					text.setBounds(10, 50 + offset, 600, 30);
+					
+					text.setFont(new Font("Serif", Font.ITALIC, 24));
+					
+					panel.add(text);
+				    
+					offset += 30; 
+					 
+					}
+				
+				}
+	
+	   //Event handler class for the total button 
+		private static class totalHandler implements ActionListener {
+			
+			public void actionPerformed(ActionEvent event) {
+				
+				panel.repaint();
+				panel.removeAll();
+				panel.revalidate();
+				
+				//Prints Total Value
+				
+				double tax = total * .0825; 
+				
+				//Set precision of double
+				Double truncatedDouble = BigDecimal.valueOf(total + tax)
+					    .setScale(3, RoundingMode.HALF_UP)
+					    .doubleValue();
+			    
+				JLabel text = new JLabel("Total: $" + truncatedDouble); 
+			    
+				text.setBounds(10, 10, 600, 30);
+				
+				text.setFont(new Font("Serif", Font.ITALIC, 24));
+				
+				panel.add(text);
+			    
+				//Addition of Credit Button to calculate the Total
+				
+				creditButton = new JButton(); 
+				creditButton.setText("Pay By Credit Card");
+				creditButton.setBounds(10, 70, 200, 50);
+				panel.add(creditButton);
+				
+				//Addition of Debit Button to calculate the Total
+
+				debitButton = new JButton(); 
+				debitButton.setText("Pay By Debit Card");
+				debitButton.setBounds(220, 70, 200, 50);
+				panel.add(debitButton);
+				
+				//Addition of cancelPayment Button to calculate the Total
+
+				cancelpaymentButton = new JButton(); 
+				cancelpaymentButton.setText("Cancel Payment");
+				cancelpaymentButton.setBounds(10, 140, 200, 50);
+				panel.add(cancelpaymentButton);
+				
+				//Addition of cancelcheckoutButton Button to calculate the Total
+
+				
+				cancelcheckoutButton.setBounds(220, 140, 200, 50);
+				panel.add(cancelcheckoutButton);
+					
+				 
+				}
+			
+			}
 		
 	
 }
