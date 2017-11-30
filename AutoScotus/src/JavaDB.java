@@ -58,5 +58,21 @@ public class JavaDB {
 		return null; 
 	}
 	
+	//Function to decrease the item quantity's after checkout 
+	
+	public void updateInventory(String sql) {
+		try {
+			Connection conn = getConnection();
+			
+			PreparedStatement statement = conn.prepareStatement(sql);
+			
+			statement.executeQuery(); 
+			
+		} catch(Exception e) {
+			System.out.println(e);
+		}
+		
+	}
+	
 	
 }

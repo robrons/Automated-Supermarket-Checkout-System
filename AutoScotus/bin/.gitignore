@@ -3,3 +3,6 @@
 /UserInterface$subtotalHandler.class
 /UserInterface$cancelcheckoutHandler.class
 /UserInterface$checkoutHandler$1.class
+/UserInterface$cardHandler.class
+/UserInterface$cardHandler$1.class
+/Authorization.class

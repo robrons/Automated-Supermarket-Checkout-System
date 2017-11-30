@@ -13,12 +13,14 @@ public class UserInterface  {
 	static JFrame frame;
 	static JPanel panel;
 	static JTextField itemNumber; 
+	static JTextField cardNumber; 
 	static JButton scanButton;
+	static JButton enterButton; 
 	static JButton totalButton; 
 	static JButton subtotalButton; 
 	static JButton cancelcheckoutButton;
-	static JButton debitButton; 
-	static JButton creditButton; 
+	static JButton cashButton; 
+	static JButton cardButton; 
 	static JButton cancelpaymentButton; 
 	static JavaDB instance; 
 	static int offset = 10; 
@@ -298,35 +300,101 @@ public class UserInterface  {
 			    
 				//Addition of Credit Button to calculate the Total
 				
-				creditButton = new JButton(); 
-				creditButton.setText("Pay By Credit Card");
-				creditButton.setBounds(10, 70, 200, 50);
-				panel.add(creditButton);
+				cardButton = new JButton(); 
+				cardButton.setText("Pay By Credit Card / Debit Card");
+				cardButton.setBounds(10, 70, 220, 50);
+				panel.add(cardButton);
 				
 				//Addition of Debit Button to calculate the Total
 
-				debitButton = new JButton(); 
-				debitButton.setText("Pay By Debit Card");
-				debitButton.setBounds(220, 70, 200, 50);
-				panel.add(debitButton);
+				cashButton = new JButton(); 
+				cashButton.setText("Pay By Cash");
+				cashButton.setBounds(230, 70, 220, 50);
+				panel.add(cashButton);
 				
 				//Addition of cancelPayment Button to calculate the Total
 
-				cancelpaymentButton = new JButton(); 
+				/*cancelpaymentButton = new JButton(); 
 				cancelpaymentButton.setText("Cancel Payment");
 				cancelpaymentButton.setBounds(10, 140, 200, 50);
-				panel.add(cancelpaymentButton);
+				panel.add(cancelpaymentButton);*/
 				
 				//Addition of cancelcheckoutButton Button to calculate the Total
-
 				
-				cancelcheckoutButton.setBounds(220, 140, 200, 50);
+				cancelcheckoutButton.setBounds(450, 70, 220, 50);
 				panel.add(cancelcheckoutButton);
 					
+				//Handlers
+				
+				//Event handler to  
+				
+				cardHandler chandler = new cardHandler();
+				cardButton.addActionListener(chandler);
 				 
 				}
 			
 			}
+		
+		//Event Handler Class that implements Pay by Credit/ Debit Card usecase
+		
+		private static class cardHandler implements ActionListener {
+			
+			public void actionPerformed(ActionEvent event) {
+				
+				panel.repaint();
+				panel.removeAll();
+				panel.revalidate();
+				
+				//Card Check out text label 
+				
+				JLabel cardPrompt = new JLabel("Card Checkout"); 
+				cardPrompt.setFont(new Font("Serif", Font.BOLD, 24));
+				cardPrompt.setBounds(10, 10, 300, 50);
+				panel.add(cardPrompt);
+			
+				//Scan entry using item number text field
+				
+				cardNumber = new JTextField();
+				cardNumber.setText(" Please Enter the Card Number");
+				cardNumber.setBounds(10, 70, 290, 20);
+				panel.add(cardNumber);
+				
+				//Clears default text when mouse is clicked on the JTextField
+				
+				cardNumber.addMouseListener(new MouseAdapter(){
+		            @Override
+		            public void mouseClicked(MouseEvent e){
+		            	cardNumber.setText("");
+		            }
+		        });
+				
+				//Enter Button to Scan Card
+				enterButton = new JButton(); 
+				enterButton.setText("Enter");
+				enterButton.setBounds(301, 70, 80, 19);
+				panel.add(enterButton);
+				
+				//Cancel Checkout Button 
+				cancelcheckoutButton.setBounds(10, 100, 180, 19);
+				panel.add(cancelcheckoutButton); 
+				
+				//Cancel Payment Button 
+				cancelpaymentButton = new JButton(); 
+				cancelpaymentButton.setText("Cancel Payment");
+				cancelpaymentButton.setBounds(200, 100, 180, 19);
+				panel.add(cancelpaymentButton); 
+				
+				//Event Handling 
+				
+				//Returns to payment when cancel checkout is pressed
+				totalHandler cphandler = new totalHandler();
+				cancelpaymentButton.addActionListener(cphandler);
+				
+				
+				
+			}
+			
+		}
 		
 	
 }
