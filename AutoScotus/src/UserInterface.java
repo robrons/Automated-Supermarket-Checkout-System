@@ -396,5 +396,13 @@ public class UserInterface  {
 			
 		}
 		
+		
+		//class Restock / Print Inventory("Roei")
+		
+		//class View/Update Product ("Austin")
+
+		//class Daily Report (Michael)
+		
+		
 	
 }
