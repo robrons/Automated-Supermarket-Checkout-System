@@ -1,0 +1,5 @@
+[{"id":1, "fullname":"Jhon Smith", "cardNumber":"648264829478", "pinNumber":"", "credit":0},
+ {"id":3, "fullname":"Ann James", "cardNumber":"238262483932", "pinNumber":"1892", "credit":1},
+ {"id":4, "fullname":"Florene Peterson", "cardNumber":"583718274625", "pinNumber":"1284", "credit":1},
+ {"id":5, "fullname":"Carrie Dean", "cardNumber":"749273937492", "pinNumber":"3829", "credit":1},
+ {"id":6, "fullname":"Thomas Lawrence", "cardNumber":"437726383927", "pinNumber":"", "credit":0}]

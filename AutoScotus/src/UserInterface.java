@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.util.LinkedList;
 
 import javax.swing.*;
 
@@ -25,8 +26,11 @@ public class UserInterface  {
 	static JavaDB instance; 
 	static int offset = 10; 
 	static double total = 0.0; 
+	static LinkedList<String> tempCheckOut; 
 	
 	public static void main(String[] args) {
+		
+		tempCheckOut = new LinkedList<>(); 
 			
 		frame = new JFrame();
 		
@@ -83,6 +87,7 @@ public class UserInterface  {
 			
 			//Reset values 
 			
+			tempCheckOut.removeAll(null);
 			offset = 10; 
 			total = 0.0; 
 			
@@ -229,6 +234,8 @@ public class UserInterface  {
 					text.setFont(new Font("Serif", Font.ITALIC, 24));
 					
 					panel.add(text);
+				
+					tempCheckOut.add(op); 
 					
 					offset += 30; 
 						
@@ -385,6 +392,8 @@ public class UserInterface  {
 				panel.add(cancelpaymentButton); 
 				
 				//Event Handling 
+				cardTransactionHandler cardTransaction = new cardTransactionHandler(total, panel, cardNumber, tempCheckOut); 
+				enterButton.addActionListener(cardTransaction);
 				
 				//Returns to payment when cancel checkout is pressed
 				totalHandler cphandler = new totalHandler();

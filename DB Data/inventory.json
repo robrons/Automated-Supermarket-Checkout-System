@@ -1,0 +1,6 @@
+[{"ID":1, "item":"RC Helicopter", "price":10.0, "discount":50, "quantity":3},
+ {"ID":2, "item":"Sony Digital Camera", "price":56.5, "discount":10, "quantity":10},
+ {"ID":3, "item":"BRAUN Vaccum Cleaner", "price":89.99, "discount":20, "quantity":21},
+ {"ID":4, "item":"Apple Watch Series 2", "price":215.0, "discount":30, "quantity":12},
+ {"ID":5, "item":"MacBook Pro (2017)", "price":1027.0, "discount":15, "quantity":15},
+ {"ID":6, "item":"PS4 Pro", "price":199.9, "discount":30, "quantity":30}]
