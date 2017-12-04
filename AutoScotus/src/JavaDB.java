@@ -2,6 +2,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class JavaDB {
 	
@@ -57,6 +59,38 @@ public class JavaDB {
 		return null; 
 	}
 	
+	public LinkedList<ArrayList<String>> getCheckoutRestock(String sql) throws Exception {
+			
+			LinkedList<ArrayList<String>> output = new LinkedList<ArrayList<String>>(); 
+			
+			try {				
+				Connection conn = getConnection();
+				
+				PreparedStatement statement = conn.prepareStatement(sql);
+				
+				ResultSet result = statement.executeQuery(sql);
+
+				while(result.next()) {
+					ArrayList<String> al = new ArrayList<>(); 
+					
+					al.add(result.getString(1)); 
+					al.add(result.getString(2)); 
+					al.add(result.getString(3));
+					al.add(result.getString(4)); 
+					al.add(result.getString(5)); 
+					
+					output.add(al); 
+				}
+				
+				return output; 
+				
+			} catch(Exception e) {
+				System.out.println(e);
+			}
+			
+			return null; 
+		} 
+	
 	//Function to decrease the item quantity's after checkout 
 	
 	public void updateInventory(String sql) {
@@ -65,7 +99,7 @@ public class JavaDB {
 			
 			PreparedStatement statement = conn.prepareStatement(sql);
 			
-			statement.executeQuery(); 
+			statement.executeUpdate();
 			
 		} catch(Exception e) {
 			System.out.println(e);

@@ -3,9 +3,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,14 +21,17 @@ public class cardTransactionHandler implements ActionListener {
 	JPanel panel; 
 	String number, pin; 
 	JTextField cardNumber, pinNumber;
-	LinkedList<String> tempCheckout; 
-	
-	public cardTransactionHandler(double total, JPanel panel, JTextField cardNumber, LinkedList<String> tempCheckout) {
+	HashMap<String, String> tempCheckout; 
+	JButton exit;
+	JavaDB instance;
+
+	public cardTransactionHandler(double total, JPanel panel, JTextField cardNumber, HashMap<String, String> tempCheckout, JButton cancelcheckoutButton, JavaDB instance) {
 		this.total = total; 
 		this.panel = panel; 
 		this.cardNumber = cardNumber; 
 		this.tempCheckout = tempCheckout; 
-		
+		exit = cancelcheckoutButton; 
+		this.instance = instance; 
 		
 	}
 	
@@ -69,9 +74,9 @@ public class cardTransactionHandler implements ActionListener {
 				}});
 
 			
+	    } else if(authenticate.isValid()) {
+	    	transact(); 
 	    }
-		
-		
 	}
 	
 	public void transact() {
@@ -80,9 +85,7 @@ public class cardTransactionHandler implements ActionListener {
 	   panel.removeAll(); 
 	   panel.revalidate();
 	   panel.repaint();
-	   
-	   String conformation = getSaltString();
-	   
+	   	   
 
 		JLabel message = new JLabel("Receipt"); 
 		
@@ -92,13 +95,21 @@ public class cardTransactionHandler implements ActionListener {
 		
 		panel.add(message);
 		
-		Iterator<String> iter = tempCheckout.iterator(); 
+		Set<String> keySet = tempCheckout.keySet();
+		
+		Iterator<String> iter = keySet.iterator();
 		
 		int offset = 50; 
 		
+		
 		while(iter.hasNext()) {
 			
-			JLabel text = new JLabel(iter.next()); 
+			String ID = iter.next(); 
+			
+			JLabel text = new JLabel(tempCheckout.get(ID)); 
+			
+			instance.updateInventory("update inventory set quantity = quantity - 1 where ID=" + ID);
+
 			    
 			text.setBounds(10, 20 + offset, 600, 30);
 				
@@ -126,14 +137,18 @@ public class cardTransactionHandler implements ActionListener {
 		cardInfo.setBounds(10, offset + 100, 650, 30);	
 		cardInfo.setFont(new Font("Serif", Font.PLAIN, 24));
 		panel.add(cardInfo);
-
+		
+		
+		exit.setText("Exit");
+		exit.setBounds(300, offset + 140, 60, 30);
+		panel.add(exit);
 	}
 	
 	protected String getSaltString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
         Random rnd = new Random();
-        while (salt.length() < 6) { // length of the random string.
+        while (salt.length() < 10) { // length of the random string.
             int index = (int) (rnd.nextFloat() * SALTCHARS.length());
             salt.append(SALTCHARS.charAt(index));
         }

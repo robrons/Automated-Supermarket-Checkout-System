@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.*;
@@ -14,9 +15,11 @@ public class UserInterface  {
 	static JFrame frame;
 	static JPanel panel;
 	static JTextField itemNumber; 
+	static JTextField cashValue; 
 	static JTextField cardNumber; 
 	static JButton scanButton;
 	static JButton enterButton; 
+	static JButton payButton; 
 	static JButton totalButton; 
 	static JButton subtotalButton; 
 	static JButton cancelcheckoutButton;
@@ -26,11 +29,11 @@ public class UserInterface  {
 	static JavaDB instance; 
 	static int offset = 10; 
 	static double total = 0.0; 
-	static LinkedList<String> tempCheckOut; 
+	static HashMap<String, String> tempCheckOut; 
 	
 	public static void main(String[] args) {
 		
-		tempCheckOut = new LinkedList<>(); 
+		tempCheckOut = new HashMap<>(); 
 			
 		frame = new JFrame();
 		
@@ -87,7 +90,7 @@ public class UserInterface  {
 			
 			//Reset values 
 			
-			tempCheckOut.removeAll(null);
+			tempCheckOut.clear();
 			offset = 10; 
 			total = 0.0; 
 			
@@ -210,7 +213,7 @@ public class UserInterface  {
 			
 			panel.repaint();
 			
-		    String s = itemNumber.getText(); 
+		    String s = itemNumber.getText();
 		    
 		    String op = null; 
 			   
@@ -235,7 +238,7 @@ public class UserInterface  {
 					
 					panel.add(text);
 				
-					tempCheckOut.add(op); 
+					tempCheckOut.put(s, op);
 					
 					offset += 30; 
 						
@@ -265,8 +268,7 @@ public class UserInterface  {
 						    .doubleValue();
 					
 					JLabel text = new JLabel("Sub Total: $" + total + " Tax: $" + truncatedDouble);
-					
-				    
+			    
 					text.setBounds(10, 50 + offset, 600, 30);
 					
 					text.setFont(new Font("Serif", Font.ITALIC, 24));
@@ -333,11 +335,14 @@ public class UserInterface  {
 					
 				//Handlers
 				
-				//Event handler to  
+				//Event handler for card and cash buttons
 				
 				cardHandler chandler = new cardHandler();
 				cardButton.addActionListener(chandler);
-				 
+				
+			    cashTransactionHandler cashTransaction = new cashTransactionHandler();				
+			    cashButton.addActionListener(cashTransaction);
+				
 				}
 			
 			}
@@ -391,15 +396,75 @@ public class UserInterface  {
 				cancelpaymentButton.setBounds(200, 100, 180, 19);
 				panel.add(cancelpaymentButton); 
 				
+				//Returns to payment when cancel checkout is pressed
+				totalHandler cphandler = new totalHandler();
+				cancelpaymentButton.addActionListener(cphandler);
+				
 				//Event Handling 
-				cardTransactionHandler cardTransaction = new cardTransactionHandler(total, panel, cardNumber, tempCheckOut); 
+				cardTransactionHandler cardTransaction = new cardTransactionHandler(total, panel, cardNumber, tempCheckOut, cancelcheckoutButton, instance); 
 				enterButton.addActionListener(cardTransaction);
+				
+			}
+			
+		}
+		
+		public static class cashTransactionHandler implements ActionListener {
+
+		
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				panel.repaint();
+				panel.removeAll();
+				panel.revalidate();
+				
+				//Card Check out text label 
+				
+				JLabel cashPrompt = new JLabel("Cash Checkout"); 
+				cashPrompt.setFont(new Font("Serif", Font.BOLD, 24));
+				cashPrompt.setBounds(10, 10, 300, 50);
+				panel.add(cashPrompt);
+			
+				//Scan entry using item number text field
+				
+				cashValue = new JTextField();
+				cashValue.setText(" Deposit your Fund");
+				cashValue.setBounds(10, 70, 130, 20);
+				panel.add(cashValue);
+				
+				//Clears default text when mouse is clicked on the JTextField
+				
+				cashValue.addMouseListener(new MouseAdapter(){
+		            @Override
+		            public void mouseClicked(MouseEvent e){
+		            	cashValue.setText("");
+		            }
+		        });
+				
+				//Enter Button to Scan Card
+				payButton = new JButton(); 
+				payButton.setText("Pay");
+				payButton.setBounds(150, 70, 80, 19);
+				panel.add(payButton);
+				
+				//Cancel Checkout Button 
+				cancelcheckoutButton.setBounds(10, 100, 180, 19);
+				panel.add(cancelcheckoutButton); 
+				
+				//Cancel Payment Button 
+				cancelpaymentButton = new JButton(); 
+				cancelpaymentButton.setText("Cancel Payment");
+				cancelpaymentButton.setBounds(200, 100, 180, 19);
+				panel.add(cancelpaymentButton); 
 				
 				//Returns to payment when cancel checkout is pressed
 				totalHandler cphandler = new totalHandler();
 				cancelpaymentButton.addActionListener(cphandler);
 				
-				
+				//Event Handling 
+				cashTransaction cash = new cashTransaction(total, panel, cashValue, tempCheckOut, cancelcheckoutButton, instance); 
+				payButton.addActionListener(cash);
 				
 			}
 			
