@@ -3,7 +3,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -21,11 +24,11 @@ public class cashTransaction implements ActionListener {
 	double total;  
 	JPanel panel; 
 	JTextField cashValue;
-	HashMap<String, String> tempCheckout; 
+	LinkedList<ArrayList<String>> tempCheckout; 
 	JButton exit;
 	JavaDB instance;
 
-	public cashTransaction(double total, JPanel panel, JTextField cashValue, HashMap<String, String> tempCheckout, JButton cancelcheckoutButton, JavaDB instance) {
+	public cashTransaction(double total, JPanel panel, JTextField cashValue, LinkedList<ArrayList<String>> tempCheckout, JButton cancelcheckoutButton, JavaDB instance) {
 		this.total = total; 
 		this.panel = panel; 
 		this.cashValue = cashValue; 
@@ -56,21 +59,38 @@ public class cashTransaction implements ActionListener {
 				
 				panel.add(message);
 				
-				Set<String> keySet = tempCheckout.keySet();
-				
-				Iterator<String> iter = keySet.iterator();
+		        
+				System.out.println(tempCheckout);
+				Iterator<ArrayList<String>> iter = tempCheckout.iterator();
 				
 				int offset = 50; 
 				
 				
 				while(iter.hasNext()) {
 					
-					String ID = iter.next(); 
+					ArrayList<String> al = iter.next(); 
+					JLabel text = new JLabel(al.get(1)); 
 					
-					JLabel text = new JLabel(tempCheckout.get(ID)); 
-					
-					instance.updateInventory("update inventory set quantity = quantity - 1 where ID=" + ID);
+					instance.updateInventory("update inventory set quantity = quantity - 1 where ID=" + al.get(0));
 
+					LinkedList<ArrayList<String>> output = new LinkedList<>();  
+					
+				
+					try {
+						
+						output = instance.getLog("select *, sold*price from transactions where item=\""+al.get(1)+"\"");
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					System.out.println(al);
+					if(output.isEmpty()) {
+						instance.updateInventory("insert into transactions values ('" + al.get(1) + "', 1, "+al.get(2)+")");
+					} else {
+						instance.updateInventory("update transactions set sold=sold+1 where item='" + al.get(1) + "'");
+
+					}
 					    
 					text.setBounds(10, 20 + offset, 600, 30);
 						
@@ -105,20 +125,25 @@ public class cashTransaction implements ActionListener {
 				
 				LinkedList<ArrayList<String>> output = new LinkedList<>(); 
 				try {
-					output = instance.getCheckoutRestock("select * from inventory having quantity < 10");
+					output = instance.getCheckoutRestock("select * from inventory having quantity < 5");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} 
 				
 				if(!output.isEmpty()) {
-				JLabel warning = new JLabel("WARNING: LOW INVENTORY!!!");
-				warning.setBounds(10, offset + 150, 650, 30);	
-				warning.setFont(new Font("Serif", Font.BOLD, 24));
-				panel.add(warning);
-				System.out.println(output);
-				}
+					Iterator<ArrayList<String>> it = output.iterator();
+					
+					while(it.hasNext()) {
+						
+					ArrayList<String> al = it.next();
+					DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					Date date = new Date();
 				
+					instance.updateInventory("insert into messages values('" + dateFormat.format(date) + " (Only " + al.get(4) + " " + al.get(1) + " remaining.)'"+")");
+
+					}
+				}
 				
 				exit.setText("Exit");
 				exit.setBounds(300, offset + 190, 60, 30);

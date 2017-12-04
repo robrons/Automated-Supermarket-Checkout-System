@@ -1,6 +1,10 @@
-[{"ID":1, "item":"RC Helicopter", "price":10.0, "discount":50, "quantity":3},
+[{"ID":1, "item":"RC Helicopter", "price":12.0, "discount":20, "quantity":10},
  {"ID":2, "item":"Sony Digital Camera", "price":56.5, "discount":10, "quantity":10},
- {"ID":3, "item":"BRAUN Vaccum Cleaner", "price":89.99, "discount":20, "quantity":21},
- {"ID":4, "item":"Apple Watch Series 2", "price":215.0, "discount":30, "quantity":12},
- {"ID":5, "item":"MacBook Pro (2017)", "price":1027.0, "discount":15, "quantity":15},
- {"ID":6, "item":"PS4 Pro", "price":199.9, "discount":30, "quantity":30}]
+ {"ID":3, "item":"Vaccum", "price":90.0, "discount":21, "quantity":10},
+ {"ID":4, "item":"Apple Watch Series 2", "price":215.0, "discount":30, "quantity":10},
+ {"ID":5, "item":"MacBook Pro (2017)", "price":1027.0, "discount":15, "quantity":10},
+ {"ID":6, "item":"PS4 Pro", "price":200.0, "discount":39, "quantity":10},
+ {"ID":7, "item":"iPhone X", "price":1000.0, "discount":10, "quantity":10},
+ {"ID":8, "item":"Google Home Mini", "price":29.99, "discount":50, "quantity":10},
+ {"ID":9, "item":"Lumix Digital Camera", "price":299.99, "discount":30, "quantity":10},
+ {"ID":10, "item":"XBox One", "price":220.0, "discount":40, "quantity":10}]

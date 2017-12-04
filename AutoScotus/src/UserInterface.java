@@ -6,9 +6,11 @@ import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public class UserInterface  {
 	
@@ -17,10 +19,15 @@ public class UserInterface  {
 	static JTextField itemNumber; 
 	static JTextField cashValue; 
 	static JTextField cardNumber; 
+	static JTextField vuItemNumber;
 	static JTextField restockItemNumber; 
 	static JTextField restockItemQuantity; 
+	static JButton viewUpdateButton;
 	static JButton restockQuantityButton; 
 	static JButton restockButton;
+	static JButton vuScanButton;
+	static JButton pdButton;
+	static JButton imButton; 
 	static JButton checkoutButton; 
 	static JButton scanButton;
 	static JButton restockScanButton;
@@ -35,11 +42,11 @@ public class UserInterface  {
 	static JavaDB instance; 
 	static int offset = 10; 
 	static double total = 0.0; 
-	static HashMap<String, String> tempCheckOut; 
+	static LinkedList<ArrayList<String>> tempCheckOut; 
 	
 	public static void main(String[] args) {
 		
-		tempCheckOut = new HashMap<>(); 
+		tempCheckOut = new LinkedList<ArrayList<String>>(); 
 			
 		frame = new JFrame();
 		
@@ -107,6 +114,35 @@ public class UserInterface  {
 			
 			panel.add(restockButton);
 			
+			
+			
+			//VIEW/UPDATE Button 
+			
+			viewUpdateButton = new JButton("VIEW/UPDATE");
+			
+			viewUpdateButton.setBounds(200, 320, 300, 80);
+			
+			panel.add(viewUpdateButton);
+			
+			//Print Daily Report Button 
+			
+			pdButton = new JButton("Print Daily Report"); 
+			
+			pdButton.setBounds(200, 430, 145, 30);
+			
+			panel.add(pdButton); 
+			
+			
+			
+			//Inventory Message Button 
+			
+			imButton = new JButton("Inventory Message"); 
+			
+			imButton.setBounds(355, 430, 145, 30);
+			
+			panel.add(imButton); 
+			
+			
 			//Handlers and Listeners
 			checkoutHandler chandler = new checkoutHandler();
 			checkoutButton.addActionListener(chandler);
@@ -114,9 +150,26 @@ public class UserInterface  {
 			restockHandler rshandler = new restockHandler(); 
 			restockButton.addActionListener(rshandler);
 			
+			VUHandler vuhandler = new VUHandler();
+			viewUpdateButton.addActionListener(vuhandler);
+			 
+			dayHandler daily = new dayHandler(); 
+			pdButton.addActionListener(daily);
+			
+			messageHandler message = new messageHandler(); 
+			imButton.addActionListener(message);
 		}
+	/*
+	 * 
+	 * 
+	 * 
+	 * CHECKOUT FUNCTIONS
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
-	//CHECKOUT FUNCTIONS
 	
 	//Even handler class for Start Checkout button 
 	
@@ -225,22 +278,24 @@ public class UserInterface  {
 			
 		    String s = itemNumber.getText();
 		    
-		    String op = null; 
+		    LinkedList<ArrayList<String>> op = null; 
 			   
 		    //SQL Command on object instance to get the information from inventory 
 		    
 			try {
-				op = instance.getInventory("SELECT item, price FROM inventory WHERE ID=" + s);
-				
+			
+				    op =  instance.getCheckoutRestock("SELECT * FROM inventory WHERE ID=" + s);
+				 
+				    ArrayList<String> al = op.get(0);
+				    
 					//Display the results into the JPanel 
 					
-					String[] splitted = op.split("\\s+"); 
 					
 					//Conversion of price to double and addition into total 
 					
-					total += Double.parseDouble(splitted[splitted.length-1].replace("$", ""));
+					total += Double.parseDouble(al.get(2));
 										
-				    JLabel text = new JLabel(op); 
+				    JLabel text = new JLabel(al.get(1) + "-----$" + al.get(2)); 
 				    
 					text.setBounds(10, 50 + offset, 600, 30);
 					
@@ -248,7 +303,7 @@ public class UserInterface  {
 					
 					panel.add(text);
 				
-					tempCheckOut.put(s, op);
+					tempCheckOut.add(al);
 					
 					offset += 30; 
 						
@@ -636,7 +691,6 @@ public class UserInterface  {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
 						instance.updateInventory("insert into inventory(item, price, discount, quantity) values(\""+describe.getText()+"\","+price.getText()+","+discount.getText()+","+quantity.getText()+")"); 
-						System.out.println("insert into inventory(item, price, discount, quantity) values(\""+describe.getText()+"\","+price.getText()+","+discount.getText()+","+quantity.getText()+")");
 						
 						panel.removeAll();
 						panel.removeAll();
@@ -731,15 +785,349 @@ public class UserInterface  {
 		}
 		
 		
+		/*
+		 * 
+		 * 
+		 * VIEW/UPDATE
+		 * 
+		 * 
+		 */
 		
-		
-		
-		//class Restock / Print Inventory("Roei")
-		
-		//class View/Update Product ("Austin")
+		public static class VUHandler implements ActionListener {
 
-		//class Daily Report (Michael)
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				panel.removeAll();
+				panel.revalidate();
+				panel.repaint();
+				
+				JLabel vuPrompt = new JLabel("View/Update"); 
+				vuPrompt.setFont(new Font("Serif", Font.BOLD, 24));
+				vuPrompt.setBounds(10, 10, 400, 50);
+				panel.add(vuPrompt);
+				
+				vuItemNumber = new JTextField();
+				vuItemNumber.setText(" Enter the Item Number to View");
+				vuItemNumber.setBounds(10, 70, 290, 20);
+				panel.add(vuItemNumber);
+				
+				
+				//Clears default text when mouse is clicked on the JTextField
+				
+				vuItemNumber.addMouseListener(new MouseAdapter(){
+		            @Override
+		            public void mouseClicked(MouseEvent e){
+		            	vuItemNumber.setText("");
+		            }
+		        });
+				
+				vuScanButton = new JButton(); 
+				vuScanButton.setText("View");
+				vuScanButton.setBounds(300, 70, 120, 19);
+				panel.add(vuScanButton);
+				
+				//Event Handlers 
+				vuButtonHandler vu  = new vuButtonHandler(); 
+				vuScanButton.addActionListener(vu);
+				
+			}
+			
+		}
 		
+		public static class vuButtonHandler implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					
+				String number = vuItemNumber.getText(); 
+				
+				LinkedList<ArrayList<String>> output = new LinkedList<>(); 
+				
+				panel.remove(vuItemNumber);
+				panel.remove(vuScanButton);
+				panel.repaint();
+				
+			   try {
+				output = instance.getCheckoutRestock("select * from inventory where ID="+number);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			   ArrayList<String> opAL = output.get(0); 
+			   
+			   JLabel price = new JLabel(); 
+			   price.setText("Price");
+			   price.setFont(new Font("Serif", Font.BOLD, 24));
+			   price.setBounds(10, 50, 150, 50);
+			   panel.add(price); 
+			   
+			   JLabel description = new JLabel(); 
+			   description.setText("Description");
+			   description.setFont(new Font("Serif", Font.BOLD, 24));
+			   description.setBounds(210, 50, 150, 50);
+			   panel.add(description); 
+			   
+			   JLabel discount = new JLabel(); 
+			   discount.setText("Discount");
+			   discount.setFont(new Font("Serif", Font.BOLD, 24));
+			   discount.setBounds(540, 50, 150, 50);
+			   panel.add(discount); 
+			   
+			   JLabel pricev = new JLabel(); 
+			   pricev.setText("$" + opAL.get(2));
+			   pricev.setFont(new Font("Serif", Font.ITALIC, 24));
+			   pricev.setBounds(10, 70, 150, 80);
+			   panel.add(pricev); 
+			   
+			   JLabel descriptionv = new JLabel(); 
+			   descriptionv.setText(opAL.get(1));
+			   descriptionv.setFont(new Font("Serif", Font.ITALIC, 24));
+			   descriptionv.setBounds(210, 70, 300, 80);
+			   panel.add(descriptionv); 
+			   
+			   JLabel discountv = new JLabel(); 
+			   discountv.setText(opAL.get(3) + "%");
+			   discountv.setFont(new Font("Serif", Font.ITALIC, 24));
+			   discountv.setBounds(540, 70, 150, 80);
+			   panel.add(discountv); 
+			
+			   JTextField priceset = new JTextField(); 
+			   priceset.setText(" Change Item Price:");
+			   priceset.setBounds(10, 150, 200, 20);
+				panel.add(priceset); 
+				
+				priceset.addMouseListener(new MouseAdapter(){
+		            @Override
+		            public void mouseClicked(MouseEvent e){
+		            	priceset.setText("");
+		            }
+		        });
+				
+				JTextField discountset = new JTextField(); 
+				discountset.setText(" Change Discount Information:");
+				discountset.setBounds(10, 180, 200, 20);
+				panel.add(discountset); 
+				
+				discountset.addMouseListener(new MouseAdapter(){
+		            @Override
+		            public void mouseClicked(MouseEvent e){
+		            	discountset.setText("");
+		            }
+		        });
+				
+				JTextField descset = new JTextField(); 
+				descset.setText(" Change Description Information:");
+				descset.setBounds(10, 210, 200, 20);
+				panel.add(descset); 
+				
+				descset.addMouseListener(new MouseAdapter(){
+		            @Override
+		            public void mouseClicked(MouseEvent e){
+		            	descset.setText("");
+		            }
+		        });
+				
+				JButton update = new JButton(); 
+				update.setText(" UPDATE");
+				update.setBounds(10, 260, 100, 20);
+				panel.add(update); 
+				
+				JButton exitButton = new JButton(); 
+				exitButton.setBounds(140, 260, 100, 20);
+				
+				exitButton.setText("EXIT");
+				panel.add(exitButton);
+				
+				exitButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						reset(); 
+					}
+					
+				});
+				
+				
+				//Action Handling
+				
+				update.addActionListener(new ActionListener() {
+				 
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						instance.updateInventory("update inventory set price="+priceset.getText()+", discount="+discountset.getText()+", item=\""+descset.getText()+"\" where ID="+number); 
+					}
+							
+				});
+				
+			}
+			
+			
+		}
+		
+		/*
+		 * 
+		 * 
+		 * 
+		 * Print Daily Report 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		public static class dayHandler implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				panel.removeAll();
+				panel.revalidate();
+				panel.repaint();
+				
+				JLabel dailyPrompt = new JLabel("Daily Report"); 
+				dailyPrompt.setFont(new Font("Serif", Font.BOLD, 24));
+				dailyPrompt.setBounds(10, 10, 400, 50);
+				panel.add(dailyPrompt);
+				
+				LinkedList<ArrayList<String>> output = new LinkedList<>(); 
+				
+				try {
+					output = instance.getLog("select *, sold*price from transactions");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+				
+				JLabel item = new JLabel(); 
+				item.setText("Item Name");
+				item.setFont(new Font("Serif", Font.BOLD, 24));
+				item.setBounds(10, 50, 150, 50);
+				panel.add(item); 
+				   
+				JLabel sold = new JLabel(); 
+				sold.setText("#Sold");
+				sold.setFont(new Font("Serif", Font.BOLD, 24));
+				sold.setBounds(300, 50, 150, 50);
+			    panel.add(sold); 
+				   
+				Iterator<ArrayList<String>> iter = output.iterator();
+				ArrayList<String> al = new ArrayList<>(); 
+				JLabel text, quant;
+				Double revenue = 0.0; 
+				
+				while(iter.hasNext()) {
+					
+					 al = iter.next(); 
+					 
+					 text = new JLabel(al.get(0)); 
+					    
+					 text.setBounds(10, 80 + offset, 600, 30);
+						
+					 text.setFont(new Font("Serif", Font.ITALIC, 24));
+						
+					 panel.add(text);
+					 
+					 quant = new JLabel(al.get(1)); 
+					    
+					 quant.setBounds(300, 80 + offset, 600, 30);
+						
+					 quant.setFont(new Font("Serif", Font.ITALIC, 24));
+						
+					 panel.add(quant);
+					 
+					 revenue += Double.parseDouble(al.get(3));
+											
+				     offset += 30; 
+				}
+				
+				 JLabel revLabel = new JLabel("Total Revenue: " + Double.toString(revenue)); 
+				    
+				 revLabel.setBounds(10, 90 + offset, 600, 30);
+					
+				 revLabel.setFont(new Font("Serif", Font.BOLD, 24));
+					
+				 panel.add(revLabel);
+				 				
+				 offset = 0; 
+				 revenue = 0.0; 
+				 
+				 JButton exitButton = new JButton(); 
+					exitButton.setBounds(300, 27, 100, 20);
+					
+					exitButton.setText("EXIT");
+					panel.add(exitButton);
+					
+					exitButton.addActionListener(new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							reset(); 
+						}
+						
+					});
+				}
+			
+			}
+		
+		    public static class messageHandler implements ActionListener {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					panel.removeAll();
+					panel.revalidate();
+					panel.repaint();
+					
+					JLabel messagePrompt = new JLabel("Inventory Messages:"); 
+					messagePrompt.setFont(new Font("Serif", Font.BOLD, 24));
+					messagePrompt.setBounds(10, 10, 400, 50);
+					panel.add(messagePrompt);
+					
+					JButton exitButton = new JButton(); 
+					exitButton.setBounds(300, 27, 100, 20);
+					
+					exitButton.setText("EXIT");
+					panel.add(exitButton);
+					
+					exitButton.addActionListener(new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							reset(); 
+						}
+						
+					});
+					
+					LinkedList<ArrayList<String>> output = new LinkedList<>();
+					try {
+						output = instance.getMessage("select * from messages");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					Iterator<ArrayList<String>> iter = output.iterator();
+					ArrayList<String> al = new ArrayList<>(); 
+					JLabel text;
+					
+					while(iter.hasNext()) {
+						
+						 al = iter.next(); 
+						 
+						 text = new JLabel(al.get(0)); 
+						    
+						 text.setBounds(10, 50 + offset, 600, 30);
+							
+						 text.setFont(new Font("Serif", Font.PLAIN, 24));
+							
+						 panel.add(text);
+						 
+												
+					     offset += 30; 
+					}
+					
+				}
+		    	
+		    }
 		
 	
+
 }

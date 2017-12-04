@@ -5,11 +5,12 @@ public class Authorization {
 	JavaDB db;  
 	String cardNumber, pinNumber; 
 	Boolean credit;
-	ResultSet result; 
-	
+	ResultSet result=null; 
+	String output;
+	boolean flag;
 	public Authorization(String cardNumber) {
 		this.cardNumber = cardNumber; 
-		String output; 
+		flag = false;
 		
 		db = new JavaDB();
 		try {
@@ -19,21 +20,23 @@ public class Authorization {
             
 			PreparedStatement statement = conn.prepareStatement("SELECT * FROM accounts WHERE cardNumber=" + cardNumber);
 			
-			result = statement.executeQuery(); 
+			result = statement.executeQuery();
 						
 			while(result.next()) {
+				flag = true;
 				credit = result.getBoolean("credit");
 				pinNumber = result.getString("pinNumber"); 
 			}
 			
 			
 		} catch (Exception e) {
+
 			e.printStackTrace();
 		} 
 	}
 	
 	public boolean isValid() {
-		return result != null; 
+		return flag;
 	}
 	
 	public boolean isCredit() {

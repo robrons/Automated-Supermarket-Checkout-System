@@ -59,6 +59,63 @@ public class JavaDB {
 		return null; 
 	}
 	
+	public  LinkedList<ArrayList<String>> getMessage(String sql) throws Exception {
+		
+		LinkedList<ArrayList<String>> output = new LinkedList<ArrayList<String>>(); 
+		
+		try {				
+			Connection conn = getConnection();
+			
+			PreparedStatement statement = conn.prepareStatement(sql);
+			
+			ResultSet result = statement.executeQuery(sql);
+
+			while(result.next()) {
+				ArrayList<String> al = new ArrayList<>(); 
+				al.add(result.getString(1)); 
+				output.add(al); 
+			}
+			
+			return output; 
+			
+		} catch(Exception e) {
+			System.out.println(e);
+		}
+		
+		return null; 
+		} 
+	
+
+	public  LinkedList<ArrayList<String>> getLog(String sql) throws Exception {
+		
+		LinkedList<ArrayList<String>> output = new LinkedList<ArrayList<String>>(); 
+		
+		try {				
+			Connection conn = getConnection();
+			
+			PreparedStatement statement = conn.prepareStatement(sql);
+			
+			ResultSet result = statement.executeQuery(sql);
+
+			while(result.next()) {
+				ArrayList<String> al = new ArrayList<>(); 
+				
+				al.add(result.getString(1)); 
+				al.add(result.getString(2)); 
+				al.add(result.getString(3));
+				al.add(result.getString(4));
+				output.add(al); 
+			}
+			
+			return output; 
+			
+		} catch(Exception e) {
+			System.out.println(e);
+		}
+		
+		return null; 
+	} 
+	
 	public LinkedList<ArrayList<String>> getCheckoutRestock(String sql) throws Exception {
 			
 			LinkedList<ArrayList<String>> output = new LinkedList<ArrayList<String>>(); 
