@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -138,9 +139,24 @@ public class cardTransactionHandler implements ActionListener {
 		cardInfo.setFont(new Font("Serif", Font.PLAIN, 24));
 		panel.add(cardInfo);
 		
+		LinkedList<ArrayList<String>> output = new LinkedList<>(); 
+		try {
+			output = instance.getCheckoutRestock("select * from inventory having quantity < 10");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		
+		if(!output.isEmpty()) {
+			JLabel warning = new JLabel("WARNING: LOW INVENTORY!!!");
+			warning.setBounds(10, offset + 150, 650, 30);	
+			warning.setFont(new Font("Serif", Font.BOLD, 24));
+			panel.add(warning);
+			System.out.println(output);
+			}
 		
 		exit.setText("Exit");
-		exit.setBounds(300, offset + 140, 60, 30);
+		exit.setBounds(300, offset + 0, 60, 30);
 		panel.add(exit);
 	}
 	

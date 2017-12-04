@@ -116,6 +116,7 @@ public class cashTransaction implements ActionListener {
 				warning.setBounds(10, offset + 150, 650, 30);	
 				warning.setFont(new Font("Serif", Font.BOLD, 24));
 				panel.add(warning);
+				System.out.println(output);
 				}
 				
 				

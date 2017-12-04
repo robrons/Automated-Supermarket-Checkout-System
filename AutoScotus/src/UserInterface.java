@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -11,13 +12,18 @@ import javax.swing.*;
 
 public class UserInterface  {
 	
-	static JButton checkoutButton;
 	static JFrame frame;
 	static JPanel panel;
 	static JTextField itemNumber; 
 	static JTextField cashValue; 
 	static JTextField cardNumber; 
+	static JTextField restockItemNumber; 
+	static JTextField restockItemQuantity; 
+	static JButton restockQuantityButton; 
+	static JButton restockButton;
+	static JButton checkoutButton; 
 	static JButton scanButton;
+	static JButton restockScanButton;
 	static JButton enterButton; 
 	static JButton payButton; 
 	static JButton totalButton; 
@@ -39,7 +45,7 @@ public class UserInterface  {
 		
 		panel = new JPanel();
 		
-		//Create an obeject for JavaDB connection
+		//Create an object for JavaDB connection
 		instance = new JavaDB(); 
 		
 		//Adding Panel to Frame 
@@ -48,24 +54,7 @@ public class UserInterface  {
 		frame.getContentPane().add(panel);
 		
 		//Panel Operations
-				checkoutButton = new JButton("Start Checkout");
-				
-				checkoutButton.setBounds(205, 200, 300, 100);
-				
-				panel.add(checkoutButton);
-				
-				checkoutHandler chandler = new checkoutHandler();
-				
-				//Enters the scanning item phase when the this button is pressed
-				checkoutButton.addActionListener(chandler);
-		
-				JLabel welcome = new JLabel("Welcome to the Self-Checkout Station"); 
-				
-				welcome.setBounds(150, 40, 600, 50);
-				
-				welcome.setFont(new Font("Serif", Font.BOLD, 24));
-				
-				panel.add(welcome);
+		reset(); 
 				
 		//Setting up Frame
 		frame.setSize(new Dimension(700, 600));
@@ -102,11 +91,32 @@ public class UserInterface  {
 			
 			panel.add(welcome);
 			
+			checkoutButton = new JButton("START CHECKOUT");
+			
+			checkoutButton.setBounds(200, 120, 300, 80);
+			
 			panel.add(checkoutButton);
 			
 			
+			
+			//Restock Button 
+
+			restockButton = new JButton("RESTOCK");
+			
+			restockButton.setBounds(200, 220, 300, 80);
+			
+			panel.add(restockButton);
+			
+			//Handlers and Listeners
+			checkoutHandler chandler = new checkoutHandler();
+			checkoutButton.addActionListener(chandler);
+			
+			restockHandler rshandler = new restockHandler(); 
+			restockButton.addActionListener(rshandler);
+			
 		}
 	
+	//CHECKOUT FUNCTIONS
 	
 	//Even handler class for Start Checkout button 
 	
@@ -469,6 +479,259 @@ public class UserInterface  {
 			}
 			
 		}
+		
+		
+		//RESTOCK FUNCTIONS
+		
+		public static class restockHandler implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				panel.removeAll(); 
+				panel.revalidate(); 
+				panel.repaint(); 
+				
+				JLabel restockPrompt = new JLabel("Enter Items to be Restocked: "); 
+				restockPrompt.setFont(new Font("Serif", Font.BOLD, 24));
+				restockPrompt.setBounds(10, 10, 400, 50);
+				panel.add(restockPrompt);
+				
+				restockItemNumber = new JTextField();
+				restockItemNumber.setText(" Enter the Restock Item Number to Scan");
+				restockItemNumber.setBounds(10, 70, 290, 20);
+				panel.add(restockItemNumber);
+				
+				
+				//Clears default text when mouse is clicked on the JTextField
+				
+				restockItemNumber.addMouseListener(new MouseAdapter(){
+		            @Override
+		            public void mouseClicked(MouseEvent e){
+		            	restockItemNumber.setText("");
+		            }
+		        });
+				
+				restockScanButton = new JButton(); 
+				restockScanButton.setText("Scan");
+				restockScanButton.setBounds(300, 70, 120, 19);
+				panel.add(restockScanButton);
+				
+				//Event Handlers 
+				restockButtonHandler restock  = new restockButtonHandler(); 
+				restockScanButton.addActionListener(restock);
+				
+			}
+			
+		}
+		
+		
+		public static class restockButtonHandler implements ActionListener {
+			
+			String number;
+	
+			LinkedList<ArrayList<String>> output = new LinkedList<ArrayList<String>>(); 
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				number = restockItemNumber.getText(); 
+				try {
+					output = instance.getCheckoutRestock("select * from inventory where ID="+number);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} 	
+				
+				if(!output.isEmpty()) {
+					panel.remove(restockItemNumber);
+					panel.remove(restockScanButton);
+					ArrayList<String> opAL = new ArrayList<String>(); 
+					opAL = output.get(0); 
+					restockItemQuantity = new JTextField();
+					restockItemQuantity.setText(" Enter Quantity for the Item: " + opAL.get(1));
+					restockItemQuantity.setBounds(10, 70, 310, 20);
+					panel.add(restockItemQuantity);
+					panel.repaint();
+					
+					restockItemQuantity.addMouseListener(new MouseAdapter(){
+			            @Override
+			            public void mouseClicked(MouseEvent e){
+			            	restockItemQuantity.setText("");
+			            }
+			        });
+					
+					restockQuantityButton = new JButton(); 
+					restockQuantityButton.setText("Restock");
+					restockQuantityButton.setBounds(320, 70, 120, 19);
+					panel.add(restockQuantityButton);
+					
+					restockUpdate restockupdate = new restockUpdate(); 
+					restockQuantityButton.addActionListener(restockupdate);
+					
+				} else {
+					panel.remove(restockItemNumber);
+					panel.remove(restockScanButton);
+					JLabel restockPrompt = new JLabel("Insert New Item: "); 
+					restockPrompt.setFont(new Font("Serif", Font.ROMAN_BASELINE, 24));
+					restockPrompt.setBounds(10, 50, 400, 50);
+					panel.add(restockPrompt);
+					
+					JTextField describe = new JTextField(); 
+					describe.setText(" Enter Item Description:");
+					describe.setBounds(10, 100, 200, 20);
+					panel.add(describe); 
+					
+					describe.addMouseListener(new MouseAdapter(){
+			            @Override
+			            public void mouseClicked(MouseEvent e){
+			            	describe.setText("");
+			            }
+			        });
+					
+					JTextField price = new JTextField(); 
+					price.setText(" Enter Item Price:");
+					price.setBounds(10, 130, 200, 20);
+					panel.add(price); 
+					
+					price.addMouseListener(new MouseAdapter(){
+			            @Override
+			            public void mouseClicked(MouseEvent e){
+			            	price.setText("");
+			            }
+			        });
+					
+					JTextField discount = new JTextField(); 
+					discount.setText(" Enter Discount Information:");
+					discount.setBounds(10, 160, 200, 20);
+					panel.add(discount); 
+					
+					discount.addMouseListener(new MouseAdapter(){
+			            @Override
+			            public void mouseClicked(MouseEvent e){
+			            	discount.setText("");
+			            }
+			        });
+					
+					JTextField quantity = new JTextField(); 
+					quantity.setText(" Enter Quantity Information:");
+					quantity.setBounds(10, 190, 200, 20);
+					panel.add(quantity); 
+					
+					quantity.addMouseListener(new MouseAdapter(){
+			            @Override
+			            public void mouseClicked(MouseEvent e){
+			            	quantity.setText("");
+			            }
+			        });
+					
+					panel.repaint();
+					
+					JButton insert = new JButton(); 
+					insert.setText("INSERT");
+					insert.setBounds(10, 220, 90, 20);
+					panel.add(insert); 
+					
+					//Event Handling
+					insert.addActionListener(new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+						instance.updateInventory("insert into inventory(item, price, discount, quantity) values(\""+describe.getText()+"\","+price.getText()+","+discount.getText()+","+quantity.getText()+")"); 
+						System.out.println("insert into inventory(item, price, discount, quantity) values(\""+describe.getText()+"\","+price.getText()+","+discount.getText()+","+quantity.getText()+")");
+						
+						panel.removeAll();
+						panel.removeAll();
+						panel.repaint();
+						
+						JLabel promp = new JLabel(); 
+						promp.setText("Item Successfully Inserted");
+						promp.setFont(new Font("Serif", Font.ROMAN_BASELINE, 24));
+						promp.setBounds(10, 70, 620, 30);
+						panel.add(promp); 
+						
+						JButton contButton = new JButton(); 
+						contButton.setBounds(300, 71, 150, 30);
+						contButton.setText("CONTINUE");
+						panel.add(contButton);
+						
+
+						JButton exitButton = new JButton(); 
+						exitButton.setBounds(500, 71, 150, 30);
+						exitButton.setText("EXIT");
+						panel.add(exitButton);
+						
+						//Action Handling 
+						
+						restockHandler restock = new restockHandler(); 
+						contButton.addActionListener(restock);
+						
+						exitButton.addActionListener(new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent arg0) {
+								reset(); 
+							}
+							
+						});
+						
+						}
+						
+					});
+					
+				
+				}
+								
+			}
+			
+		}
+		
+		public static class restockUpdate implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				instance.updateInventory("update inventory set quantity="+restockItemQuantity.getText()+" where ID="+restockItemNumber.getText());
+				panel.remove(restockQuantityButton);
+				panel.remove(restockItemQuantity);
+				panel.repaint();
+				
+				JLabel promp = new JLabel(); 
+				promp.setText("Item Successfully Updated");
+				promp.setFont(new Font("Serif", Font.ROMAN_BASELINE, 24));
+				promp.setBounds(10, 70, 620, 30);
+				panel.add(promp); 
+				
+				JButton contButton = new JButton(); 
+				contButton.setBounds(300, 71, 150, 30);
+				contButton.setText("CONTINUE");
+				panel.add(contButton);
+				
+
+				JButton exitButton = new JButton(); 
+				exitButton.setBounds(500, 71, 150, 30);
+				exitButton.setText("EXIT");
+				panel.add(exitButton);
+				
+				
+				//Action Handling 
+				
+				restockHandler restock = new restockHandler(); 
+				contButton.addActionListener(restock);
+				
+				exitButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						reset(); 
+					}
+					
+				});
+				
+				
+			} 
+			
+		}
+		
+		
+		
 		
 		
 		//class Restock / Print Inventory("Roei")
